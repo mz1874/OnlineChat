@@ -29,6 +29,7 @@ public class UserController {
         if (null != user && user.getUsername().equals("123") && user.getPassword().equals("123")){
             commonResult.setFlag(true);
             session.setAttribute("user", user.getUsername());
+            commonResult.setMessage(session.getId());
         }else {
             commonResult.setFlag(false);
             commonResult.setMessage("Login fail!");
