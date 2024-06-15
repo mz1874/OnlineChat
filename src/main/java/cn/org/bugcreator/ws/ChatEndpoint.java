@@ -6,7 +6,10 @@ import cn.org.bugcreator.vo.Message;
 import cn.org.bugcreator.wsutil.MessageUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
+import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -22,29 +25,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description Handles WebSocket connections for a chat application.
  */
 
-@ServerEndpoint(value = "/chat", configurator = GetHttpSessionConfig.class)
+@ServerEndpoint("/socket/{userName}")
+@Component
 public class ChatEndpoint {
 
     private static final Map<String, Session> onlineUsers = new ConcurrentHashMap<>();
 
-    private HttpSession httpSession;
-
     @OnOpen
-    public void onOpen(Session session, EndpointConfig config) {
-        this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-        String userName = (String) this.httpSession.getAttribute("user");
+    public void onOpen(Session session, EndpointConfig config,  @PathParam("userName") String userName) {
         onlineUsers.put(userName, session);
         String jsonObj = MessageUtils.getMessage(true, null, getFriends(userName));
         broadcastAllUser(jsonObj);
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message, @PathParam("userName") String userName) {
         Message msg = JSONUtil.toBean(message, Message.class);
         String toName = msg.getToName();
         String messageToSend = msg.getMessage();
         Session targetSession = onlineUsers.get(toName);
-        String userName = (String) this.httpSession.getAttribute("user");
         try {
             targetSession.getBasicRemote().sendText(MessageUtils.getMessage(false, userName, messageToSend));
         } catch (Exception e) {
@@ -79,8 +78,7 @@ public class ChatEndpoint {
     }
 
     @OnClose
-    public void onClose(Session session, CloseReason closeReason) {
-        String userName = (String) this.httpSession.getAttribute("user");
+    public void onClose(Session session, CloseReason closeReason, @PathParam("userName")  String userName) {
         onlineUsers.remove(userName);
         String jsonObj = MessageUtils.getMessage(true, null, getFriends(userName));
         broadcastAllUser(jsonObj);

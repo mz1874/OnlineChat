@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: v6%+nT8M
+    url: jdbc:mysql://localhost:3306/ChatOnline?useSSL=false&serverTimezone=UTC
+  # 下面的配置是可选的，取决于你的连接池和数据库优化需求
+  # HikariCP 连接池配置
+  hikari:
+    minimum-idle: 5
+    idle-timeout: 600000
+    maximum-pool-size: 10
+    auto-commit: true
+    pool-name: MyHikariCP
+    max-lifetime: 1800000
+    connection-timeout: 30000
+
+mybatis:
+  mapper-locations:
+    - classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
