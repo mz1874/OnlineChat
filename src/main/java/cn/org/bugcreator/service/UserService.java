@@ -12,4 +12,6 @@ import org.springframework.web.bind.annotation.Mapping;
 public interface UserService {
 
     CommonResponse login(String userName, String password);
+
+    CommonResponse register(UserEntity user);
 }

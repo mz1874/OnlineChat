@@ -2,12 +2,15 @@ package cn.org.bugcreator.ws;
 
 import cn.hutool.json.JSONUtil;
 import cn.org.bugcreator.configuartion.GetHttpSessionConfig;
+import cn.org.bugcreator.util.LogUtil;
 import cn.org.bugcreator.vo.Message;
 import cn.org.bugcreator.wsutil.MessageUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -29,10 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class ChatEndpoint {
 
+
     private static final Map<String, Session> onlineUsers = new ConcurrentHashMap<>();
 
     @OnOpen
-    public void onOpen(Session session, EndpointConfig config,  @PathParam("userName") String userName) {
+    public void onOpen(Session session, EndpointConfig config, @PathParam("userName") String userName) {
+        LogUtil.logInfo(ChatEndpoint.class,"WS\r" + userName + "\tConnected!");
         onlineUsers.put(userName, session);
         String jsonObj = MessageUtils.getMessage(true, null, getFriends(userName));
         broadcastAllUser(jsonObj);
@@ -78,7 +83,7 @@ public class ChatEndpoint {
     }
 
     @OnClose
-    public void onClose(Session session, CloseReason closeReason, @PathParam("userName")  String userName) {
+    public void onClose(Session session, CloseReason closeReason, @PathParam("userName") String userName) {
         onlineUsers.remove(userName);
         String jsonObj = MessageUtils.getMessage(true, null, getFriends(userName));
         broadcastAllUser(jsonObj);

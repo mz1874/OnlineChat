@@ -38,6 +38,12 @@ public class UserController {
         return login;
     }
 
+
+    @PostMapping(value = "register")
+    public CommonResponse register(@RequestBody UserEntity user){
+       return userService.register(user);
+    }
+
     /**
      * get current login user name
      * @param session

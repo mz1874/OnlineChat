@@ -24,4 +24,13 @@ public class UserServiceImplement implements UserService {
         }
         return CommonResponse.success("Could not find the userName or password");
     }
+
+    @Override
+    public CommonResponse<String> register(UserEntity user) {
+        if (user.getName() == null || user.getUserPassword() == null){
+            return CommonResponse.failure("userName or password must not be null");
+        }
+        userMapper.insert(user);
+        return CommonResponse.success("install successful!");
+    }
 }
