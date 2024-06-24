@@ -32,5 +32,7 @@ public class UserEntity implements Serializable {
 
     private Date createDate;
 
+    private String imageSrc;
+
 
 }

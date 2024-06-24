@@ -7,6 +7,8 @@ import cn.org.bugcreator.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 
 @Service
 public class UserServiceImplement implements UserService {
@@ -19,18 +21,26 @@ public class UserServiceImplement implements UserService {
     public CommonResponse login(String userName, String password) {
         if (null != userName && null != password){
             UserEntity result = userMapper.selectUserByUserNameAndPassword(userName, password);
+            if (result != null){
+                return CommonResponse.success(result);
+            }
 
-            return CommonResponse.success(result);
         }
         return CommonResponse.success("Could not find the userName or password");
     }
 
     @Override
     public CommonResponse<String> register(UserEntity user) {
-        if (user.getName() == null || user.getUserPassword() == null){
-            return CommonResponse.failure("userName or password must not be null");
+        try {
+            if (user.getName() == null || user.getUserPassword() == null){
+                return CommonResponse.failure("userName or password must not be null");
+            }
+            user.setCreateDate(new Date());
+            userMapper.insert(user);
+        }catch (Exception e){
+            return CommonResponse.failure(e.toString());
         }
-        userMapper.insert(user);
+
         return CommonResponse.success("install successful!");
     }
 }
