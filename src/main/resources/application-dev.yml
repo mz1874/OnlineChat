@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: v6%+nT8M
-    url: jdbc:mysql://localhost:3306/ChatOnline?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ChatOnline?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
   # 下面的配置是可选的，取决于你的连接池和数据库优化需求
   # HikariCP 连接池配置
   hikari:
